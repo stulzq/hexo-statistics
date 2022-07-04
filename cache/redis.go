@@ -19,7 +19,7 @@ func init() {
 		panic(errors.Wrap(err, "load redis conf err"))
 	}
 
-	timout := time.Duration(conf.Timeout) * time.Second
+	timout := time.Duration(conf.Timeout) * time.Millisecond
 	//opt := &redis.ClusterOptions{Password: conf.Password, Addrs: strings.Split(conf.Address, ","), MaxRetries: 2, ReadTimeout: timout, WriteTimeout: timout, IdleTimeout: timout}
 	opt := &redis.Options{Password: conf.Password, Addr: conf.Address, MaxRetries: 2, ReadTimeout: timout, WriteTimeout: timout, IdleTimeout: timout}
 	client := redis.NewClient(opt)

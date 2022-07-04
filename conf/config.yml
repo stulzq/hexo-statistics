@@ -5,6 +5,13 @@ statistics:
   site:
     - xcmaster.com
     - localhost:5000
+cors:
+  origins:
+    - https://xcmaster.com
+    - http://localhost:4000
+  methods:
+    - GET
+    - POST
 
 redis:
   address: 127.0.0.1:6379
