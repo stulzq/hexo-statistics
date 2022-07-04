@@ -6,6 +6,15 @@ Hexo blog traffic statistics service, based on redis. Use hyperloglog to count U
 
 Demo: https://xcmaster.com/
 
+Article pv:
+
+![](img/page_pv.png)
+
+Site uv and pv:
+
+![](img/site_uv.png)
+
+
 ## Get Start
 
 ### Step

@@ -6,6 +6,14 @@ Hexo 博客统计服务, 基于 Redis 实现。使用 hyperloglog 统计 UV。
 
 Demo: https://xcmaster.com/
 
+文章 PV:
+
+![](img/page_pv.png)
+
+站点 PV 和 UV:
+
+![](img/site_uv.png)
+
 ## 快速开始
 
 ### 步骤
