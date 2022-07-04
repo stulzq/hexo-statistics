@@ -55,7 +55,7 @@ docker run --name hexo-stat \
 
 ### Configure template
 
-Inject get data js file:
+Save file to <blog_root>/source/js/hexo-stat.js
 
 ````javascript
 "use strict";
@@ -91,11 +91,12 @@ getData();
 
 ````
 
-Inject counter js file:
+Inject js file:
 
->file in binlog_root/scripts/inject.js
+>file in blog_root/scripts/inject.js
 
 ````javascript
+hexo.extend.injector.register('body_end', '<script src="https://<your_blog_domain>/js/hexo-stat.js"></script>', 'default');
 hexo.extend.injector.register('body_end', '<script src="https://<hexo_statistics_domain>/stat/counter"></script>', 'default');
 ````
 
