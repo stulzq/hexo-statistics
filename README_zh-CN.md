@@ -26,6 +26,19 @@ Demo: https://xcmaster.com/
 
 Ubuntu: `apt-get install redis-server`
 
+
+#### Docker
+
+````shell
+mkdir -p /data/redis
+
+docker run -p 6379:6379 \
+  -v /data/redis/conf/redis.conf:/etc/redis/redis.conf \
+  -v /data/redis/data:/data \
+  --name hexo-stat-redis \
+  -d redis:5.0 redis-server /etc/redis/redis.conf
+````
+
 > 其他下系统请自行探索
 
 ### 运行 Hexo Statistics
@@ -61,7 +74,7 @@ curl https://raw.githubusercontent.com/stulzq/hexo-statistics/main/conf/config.y
 docker run --name hexo-stat \
   -v /data/hexo-stat/conf:/app/conf \
   -v /data/hexo-stat/logs:/app/logs \
-  stulzq/hexo-statistics:v0.1.0
+  -d stulzq/hexo-statistics:v0.1.0
 
 ````
 
