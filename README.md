@@ -1,5 +1,7 @@
 # Hexo Statistics
 
+English|[中文](README_zh-CN.md)
+
 Hexo blog traffic statistics service, based on redis. Use hyperloglog to count UV.
 
 Demo: https://xcmaster.com/
@@ -42,9 +44,9 @@ chmod +x hexo-statistics
 ````shell
 mkdir -p /data/hexo-stat/conf
 
-curl https://raw.githubusercontent.com/stulzq/hexo-statistics/main/conf/config.yml -o /data/hexo/stat/config.yml
+curl https://raw.githubusercontent.com/stulzq/hexo-statistics/main/conf/config.yml -o /data/hexo-stat/config.yml
 
-# update your config
+# update your config /data/hexo-stat/config.yml
 
 docker run --name hexo-stat \
   -v /data/hexo-stat/conf:/app/conf \
@@ -60,6 +62,7 @@ Save file to <blog_root>/source/js/hexo-stat.js
 ````javascript
 "use strict";
 
+// update your hexo statistics domain
 var serverDomain = "https://<your_hexo_statistics_domain>"
 
 function getData() {
@@ -96,7 +99,9 @@ Inject js file:
 >file in blog_root/scripts/inject.js
 
 ````javascript
-hexo.extend.injector.register('body_end', '<script src="https://<your_blog_domain>/js/hexo-stat.js"></script>', 'default');
+hexo.extend.injector.register('body_end', '<script src="/js/hexo-stat.js"></script>', 'default');
+
+// update your hexo statistics domain
 hexo.extend.injector.register('body_end', '<script src="https://<hexo_statistics_domain>/stat/counter"></script>', 'default');
 ````
 
