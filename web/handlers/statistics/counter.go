@@ -44,6 +44,7 @@ func Counter(ctx context.Context, c *app.RequestContext) {
 	sitePvKey := genSitePv(u.Host)
 	pagePvKey := genPagePv(u.Host, u.Path)
 	// set to cache
+	fmt.Println(c.ClientIP())
 	cli := cache.GetClient().Pipeline()
 	cli.PFAdd(ctx, siteUvKey, c.ClientIP())
 	cli.Incr(ctx, sitePvKey)
@@ -81,8 +82,16 @@ func Get(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	sitePvInt, _ := sitePv.Int64()
-	pagePvInt, _ := pagePv.Int64()
+	var sitePvInt, pagePvInt int64
+	if pagePv.Err() == nil {
+		pagePvInt, _ = pagePv.Int64()
+
+	}
+
+	if sitePv.Err() == nil {
+		sitePvInt, _ = sitePv.Int64()
+	}
+
 	c.JSON(200, model.StatisticsResp{
 		SitePv: sitePvInt,
 		SiteUv: siteUv.Val(),
