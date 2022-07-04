@@ -1,2 +1,9 @@
 log:
   level: Debug
+
+statistics:
+  site:
+    - xcmaster.com
+
+redis:
+  conn: 127.0.0.1:6379
