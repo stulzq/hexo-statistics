@@ -7,13 +7,15 @@ run:
 
 build-linux-amd64:
 	@GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "$(LDFLAGS)" -o bin/linux-amd64/hexo-stat ./cmd
-	@cp conf/config.yml bin/linux-amd64/conf
+	@mkdir bin/linux-amd64/conf/
+	@cp conf/config.yml bin/linux-amd64/conf/
 
 build-darwin-amd64:
 	@GOOS=darwin GOARCH=amd64 go build -trimpath -ldflags "$(LDFLAGS)" -o bin/darwin-amd64/hexo-stat ./cmd
-	@cp conf/config.yml bin/darwin-amd64/conf
+	@mkdir bin/darwin-amd64/conf/
+	@cp conf/config.yml bin/darwin-amd64/conf/
 
 clean:
-	@rm -f /bin/hexo-stat
+	@rm -rf bin/*
 
 .PHONY: run build

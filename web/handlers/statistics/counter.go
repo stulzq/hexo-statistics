@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
+	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
 	"github.com/stulzq/hexo-statistics/cache"
 	"github.com/stulzq/hexo-statistics/config"
@@ -76,7 +77,7 @@ func Get(ctx context.Context, c *app.RequestContext) {
 	siteUv := cli.PFCount(ctx, siteUvKey)
 	sitePv := cli.Get(ctx, sitePvKey)
 	pagePv := cli.Get(ctx, pagePvKey)
-	if _, err := cli.Exec(ctx); err != nil {
+	if _, err := cli.Exec(ctx); err != nil && err != redis.Nil {
 		c.JSON(500, utils.H{"msg": "read data err"})
 		logger.Error("[Web][Stat][Get] read data error", err)
 		return
