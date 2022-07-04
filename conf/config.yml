@@ -4,6 +4,9 @@ log:
 statistics:
   site:
     - xcmaster.com
+    - localhost:5000
 
 redis:
-  conn: 127.0.0.1:6379
+  address: 127.0.0.1:6379
+  password:
+  timeout: 3000

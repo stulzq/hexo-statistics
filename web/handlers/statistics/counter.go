@@ -2,7 +2,11 @@ package statistics
 
 import (
 	"context"
+	"fmt"
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/utils"
+	"github.com/pkg/errors"
+	"github.com/stulzq/hexo-statistics/cache"
 	"github.com/stulzq/hexo-statistics/config"
 	"github.com/stulzq/hexo-statistics/logger"
 	"github.com/stulzq/hexo-statistics/util"
@@ -11,6 +15,12 @@ import (
 )
 
 var allowSite map[string]int
+
+const (
+	ERR_PARSE_REFERER     = "parse referer err"
+	ERR_NO_REFERER        = "no referer"
+	ERR_REFERER_NOT_ALLOW = "host %s not allow"
+)
 
 func init() {
 	data := config.Get("statistics:site").([]interface{})
@@ -23,33 +33,89 @@ func init() {
 	logger.Infof("[web][statistics] allow site %v", allowSite)
 }
 
-func Counter(_ context.Context, c *app.RequestContext) {
-	referer := c.GetHeader("Referer")
-	if referer == nil {
-		c.String(400, "no referer")
+func Counter(ctx context.Context, c *app.RequestContext) {
+	u, err := checkReferer(c)
+	if err != nil {
+		c.JSON(400, utils.H{"msg": err.Error()})
 		return
 	}
 
-	ref := util.BytesToStr(referer)
-	if u, err := url.Parse(ref); err != nil {
-		c.String(400, "parse referer err")
-		return
-	} else if _, ok := allowSite[u.Host]; !ok {
-		c.String(403, "host %s now allow", u.Host)
-		return
-	}
-
+	siteUvKey := genSiteUv(u.Host)
+	sitePvKey := genSitePv(u.Host)
+	pagePvKey := genPagePv(u.Host, u.Path)
 	// set to cache
+	cli := cache.GetClient().Pipeline()
+	cli.PFAdd(ctx, siteUvKey, c.ClientIP())
+	cli.Incr(ctx, sitePvKey)
+	cli.Incr(ctx, pagePvKey)
+
+	if _, err := cli.Exec(ctx); err != nil {
+		c.JSON(500, utils.H{"msg": "set to cache err"})
+		logger.Error("[Web][Stat][Get] set to cache error", err)
+		return
+	}
 
 	c.SetContentType("application/javascript")
 	c.SetStatusCode(200)
 	c.WriteString("console.log('hexo-statistics v0.1.0')")
 }
 
-func Get(_ context.Context, c *app.RequestContext) {
+func Get(ctx context.Context, c *app.RequestContext) {
+	u, err := checkReferer(c)
+	if err != nil {
+		c.JSON(400, utils.H{"msg": err.Error()})
+		return
+	}
+
+	siteUvKey := genSiteUv(u.Host)
+	sitePvKey := genSitePv(u.Host)
+	pagePvKey := genPagePv(u.Host, u.Path)
+	// get from cache
+	cli := cache.GetClient().Pipeline()
+	siteUv := cli.PFCount(ctx, siteUvKey)
+	sitePv := cli.Get(ctx, sitePvKey)
+	pagePv := cli.Get(ctx, pagePvKey)
+	if _, err := cli.Exec(ctx); err != nil {
+		c.JSON(500, utils.H{"msg": "read data err"})
+		logger.Error("[Web][Stat][Get] read data error", err)
+		return
+	}
+
+	sitePvInt, _ := sitePv.Int64()
+	pagePvInt, _ := pagePv.Int64()
 	c.JSON(200, model.StatisticsResp{
-		SitePv: 0,
-		SiteUv: 0,
-		PagePv: 0,
+		SitePv: sitePvInt,
+		SiteUv: siteUv.Val(),
+		PagePv: pagePvInt,
 	})
+}
+
+func genSiteUv(host string) string {
+	return fmt.Sprintf("siteuv:%s", host)
+}
+
+func genSitePv(host string) string {
+	return fmt.Sprintf("sitepv:%s", host)
+}
+
+func genPagePv(host string, path string) string {
+	return fmt.Sprintf("pagepv:%s:%s", host, path)
+}
+
+func checkReferer(c *app.RequestContext) (*url.URL, error) {
+	referer := c.GetHeader("Referer")
+	if referer == nil {
+		return nil, errors.New(ERR_NO_REFERER)
+	}
+
+	ref := util.BytesToStr(referer)
+	var u *url.URL
+	var err error
+	if u, err = url.Parse(ref); err != nil {
+		return nil, errors.Wrapf(err, ERR_PARSE_REFERER)
+	} else if _, ok := allowSite[u.Host]; !ok {
+		return nil, errors.Errorf(ERR_REFERER_NOT_ALLOW, u.Host)
+	}
+
+	return u, nil
 }
