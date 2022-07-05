@@ -88,7 +88,7 @@ var serverDomain = "https://<your_hexo_statistics_domain>"
 
 function getData() {
   $.ajax({
-    url: serverDomain + "/api/stat/get",
+    url: serverDomain + "/stat/get",
     type: "GET",
     dataType: "json",
     success: function (resp) {
