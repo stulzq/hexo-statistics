@@ -1,10 +1,13 @@
 log:
   level: Debug
 
+# allowed to use hexo statistics domain
 statistics:
   site:
     - xcmaster.com
     - localhost:5000
+
+# cors domains
 cors:
   origins:
     - https://xcmaster.com
@@ -13,7 +16,8 @@ cors:
     - GET
     - POST
 
+# redis config
 redis:
   address: 127.0.0.1:6379
   password:
-  timeout: 3000
+  timeout: 3000 # timeout in milliseconds
