@@ -1,8 +1,15 @@
-FROM alpine:3.14
+FROM golang:1.18 AS building
+
+COPY . /building
+WORKDIR /building
+
+RUN make build
+RUN mkdir bin/conf && cp conf/config.yml bin/conf
+
+FROM alpine:3
 
 WORKDIR /app
 
-COPY bin/hexo-statistics-docker .
-ENV HEXO_DEBUG=false
+COPY --from=building /building/bin/* .
 
-ENTRYPOINT ["./hexo-stat"]
+ENTRYPOINT ["hexo-stat"]
