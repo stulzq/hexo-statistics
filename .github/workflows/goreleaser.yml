@@ -1,7 +1,11 @@
 name: goreleaser
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - "*.*.*"
+      - "!*.*.*-beta*"
+      - "!*.*.*-rc*"
 
 jobs:
   goreleaser:
