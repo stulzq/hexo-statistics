@@ -41,7 +41,9 @@ for os in $os_all; do
             mv ./hexo_statistics_${os}_${arch} ${stat_path}/hexo_statistics
         fi
         cp ../LICENSE ${stat_path}
-        cp -rf ../conf/* ${stat_path}
+
+        mkdir ${stat_path}/conf
+        cp -rf ../conf/* ${stat_path}/conf
 
         # packages
         cd ./packages
