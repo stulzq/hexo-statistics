@@ -1,8 +1,11 @@
 name: Build Image and Publish to Dockerhub & GPR
 
 on:
-  release:
-    types: [released]
+  push:
+    tags:
+      - "*.*.*"
+      - "!*.*.*-beta*"
+      - "!*.*.*-rc*"
 
 # on:
 #   release:
