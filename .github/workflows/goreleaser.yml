@@ -20,7 +20,6 @@ jobs:
       - name: Make All
         run: |
           ./package.sh
-          ls release/packages
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
