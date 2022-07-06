@@ -10,6 +10,6 @@ FROM alpine:3
 
 WORKDIR /app
 
-COPY --from=building /building/bin/* .
+COPY --from=building /building/bin .
 
 ENTRYPOINT ["./hexo-stat"]
