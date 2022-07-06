@@ -1,4 +1,5 @@
 # compile for version
+set -e
 make
 if [ $? -ne 0 ]; then
     echo "make error"
