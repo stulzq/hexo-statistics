@@ -22,8 +22,10 @@ jobs:
           cp -f `which go` /usr/bin/go
       - name: Make All
         run: |
-          chmod +x package.sh
-          ./package.sh
+          cp package.sh p.sh
+          chmod +x p.sh
+          ./p.sh
+          rm -f p.sh
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
