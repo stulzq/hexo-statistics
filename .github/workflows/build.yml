@@ -20,6 +20,8 @@ jobs:
   image:
     name: Build Image from Dockerfile and binaries
     runs-on: ubuntu-latest
+    needs:
+      - build
     steps:
       # environment
       - name: Checkout
