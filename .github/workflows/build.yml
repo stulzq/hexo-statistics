@@ -3,12 +3,12 @@ name: Build Image and Publish to Dockerhub & GPR
 on:
   release:
     types: [ edited ]
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Image tag'
-        required: true
-        default: 'test'
+#   workflow_dispatch:
+#     inputs:
+#       tag:
+#         description: 'Image tag'
+#         required: true
+#         default: 'test'
 jobs:
   image:
     name: Build Image from Dockerfile and binaries
