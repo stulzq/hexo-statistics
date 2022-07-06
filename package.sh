@@ -29,13 +29,13 @@ for os in $os_all; do
                 continue
             fi
             mkdir ${stat_path}
-            mv ./hexo_statistics_${os}_${arch}.exe ${frp_path}/hexo_statistics.exe
+            mv ./hexo_statistics_${os}_${arch}.exe ${stat_path}/hexo_statistics.exe
         else
             if [ ! -f "./hexo_statistics_${os}_${arch}" ]; then
                 continue
             fi
             mkdir ${stat_path}
-            mv ./hexo_statistics_${os}_${arch} ${frp_path}/hexo_statistics
+            mv ./hexo_statistics_${os}_${arch} ${stat_path}/hexo_statistics
         fi
         cp ../LICENSE ${stat_path}
         cp -rf ../conf/* ${stat_path}
