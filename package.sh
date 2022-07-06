@@ -1,10 +1,10 @@
 # compile for version
 set -e
-make
-if [ $? -ne 0 ]; then
-    echo "make error"
-    exit 1
-fi
+#make
+#if [ $? -ne 0 ]; then
+#    echo "make error"
+#    exit 1
+#fi
 
 stat_version=`cat ./VERSION.txt`
 echo "build version: $stat_version"
