@@ -16,6 +16,8 @@ rm -rf ./release/packages
 mkdir -p ./release/packages
 
 os_all='linux windows darwin'
+#os_all='windows'
+#arch_all='386'
 arch_all='386 amd64 arm arm64'
 
 cd ./release
