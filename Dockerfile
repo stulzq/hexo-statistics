@@ -12,4 +12,4 @@ WORKDIR /app
 
 COPY --from=building /building/bin .
 
-ENTRYPOINT ["./hexo-stat"]
+ENTRYPOINT ["./hexo_stat"]
