@@ -45,17 +45,17 @@ docker run -p 6379:6379 \
 
 ````shell
 
-export hexo_version=v0.1.0
+export hexo_version=v0.5.7
 
 wget https://github.com/stulzq/hexo-statistics/releases/download/$hexo_version/hexo-statistics-$hexo_version-linux-amd64.tar.gz
 
-tar -xzvf hexo-statistics-$hexo_version-linux-amd64.tar.gz
+tar -xzvf hexo-statistics-$hexo_version_linux_amd64.tar.gz
 
-cd hexo-statistics-$hexo_version-linux-amd64
+cd hexo-statistics-$hexo_version_linux_amd64
 
 # update your config on conf/config.yml
 
-chmod +x hexo-statistics
+chmod +x hexo_statistics
 ./hexo-statistics
 
 ````
