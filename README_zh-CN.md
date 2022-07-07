@@ -49,7 +49,7 @@ docker run -p 6379:6379 \
 
 export hexo_version=v0.1.0
 
-wget https://github.com/stulzq/hexo-statistics/releases/download/$hexo_version/hexo_statistics_$hexo_version-linux-amd64.tar.gz
+wget https://github.com/stulzq/hexo-statistics/releases/download/$hexo_version/hexo_statistics_$hexo_version_linux_amd64.tar.gz
 
 tar -xzvf hexo_statistics_$hexo_version_linux_amd64.tar.gz
 

@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stulzq/hexo-statistics/cache"
 	"github.com/stulzq/hexo-statistics/config"
+	"github.com/stulzq/hexo-statistics/keys"
 	"github.com/stulzq/hexo-statistics/logger"
 	"github.com/stulzq/hexo-statistics/util"
 	"github.com/stulzq/hexo-statistics/web/handlers/statistics/model"
@@ -24,13 +25,7 @@ const (
 )
 
 func init() {
-	data := config.Get("statistics:site").([]interface{})
-	allowSite = make(map[string]int, len(data))
-
-	for i := 0; i < len(data); i++ {
-		allowSite[data[i].(string)] = 0
-	}
-
+	allowSite = config.GetStatAllowSite()
 	logger.Infof("[web][statistics] allow site %v", allowSite)
 }
 
@@ -41,9 +36,9 @@ func Counter(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	siteUvKey := genSiteUv(u.Host)
-	sitePvKey := genSitePv(u.Host)
-	pagePvKey := genPagePv(u.Host, u.Path)
+	siteUvKey := keys.GenSiteUv(u.Host)
+	sitePvKey := keys.GenSitePv(u.Host)
+	pagePvKey := keys.GenPagePv(u.Host, u.Path)
 	// set to cache
 	fmt.Println(c.ClientIP())
 	cli := cache.GetClient().Pipeline()
@@ -69,12 +64,14 @@ func Get(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	siteUvKey := genSiteUv(u.Host)
-	sitePvKey := genSitePv(u.Host)
-	pagePvKey := genPagePv(u.Host, u.Path)
+	siteUvKey := keys.GenSiteUv(u.Host)
+	sitePvKey := keys.GenSitePv(u.Host)
+	pagePvKey := keys.GenPagePv(u.Host, u.Path)
+	siteUvArchKey := keys.GenSiteUvArchive(u.Host)
 	// get from cache
 	cli := cache.GetClient().Pipeline()
 	siteUv := cli.PFCount(ctx, siteUvKey)
+	siteArchUv := cli.Get(ctx, siteUvArchKey)
 	sitePv := cli.Get(ctx, sitePvKey)
 	pagePv := cli.Get(ctx, pagePvKey)
 	if _, err := cli.Exec(ctx); err != nil && err != redis.Nil {
@@ -83,7 +80,7 @@ func Get(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	var sitePvInt, pagePvInt int64
+	var siteUvArchInt, sitePvInt, pagePvInt int64
 	if pagePv.Err() == nil {
 		pagePvInt, _ = pagePv.Int64()
 
@@ -93,23 +90,15 @@ func Get(ctx context.Context, c *app.RequestContext) {
 		sitePvInt, _ = sitePv.Int64()
 	}
 
+	if siteArchUv.Err() == nil {
+		siteUvArchInt, _ = siteArchUv.Int64()
+	}
+
 	c.JSON(200, model.StatisticsResp{
 		SitePv: sitePvInt,
-		SiteUv: siteUv.Val(),
+		SiteUv: siteUv.Val() + siteUvArchInt,
 		PagePv: pagePvInt,
 	})
-}
-
-func genSiteUv(host string) string {
-	return fmt.Sprintf("siteuv:%s", host)
-}
-
-func genSitePv(host string) string {
-	return fmt.Sprintf("sitepv:%s", host)
-}
-
-func genPagePv(host string, path string) string {
-	return fmt.Sprintf("pagepv:%s:%s", host, path)
 }
 
 func checkReferer(c *app.RequestContext) (*url.URL, error) {
