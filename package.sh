@@ -6,8 +6,9 @@ set -e
 #    exit 1
 #fi
 
-stat_version=`cat ./VERSION.txt`
-echo "build version: $stat_version"
+app_version=`cat ./VERSION.txt`
+bin_prefix="hexo_statistics"
+echo "build version: $app_version"
 
 # cross_compiles
 make -f ./Makefile.cross-compiles
@@ -24,36 +25,36 @@ cd ./release
 
 for os in $os_all; do
     for arch in $arch_all; do
-        stat_dir_name="hexo_statistics_${stat_version}_${os}_${arch}"
-        stat_path="./packages/hexo_statistics_${stat_version}_${os}_${arch}"
+        app_dir_name="${bin_prefix}_${app_version}_${os}_${arch}"
+        app_path="./packages/${bin_prefix}_${app_version}_${os}_${arch}"
 
         if [ "x${os}" = x"windows" ]; then
-            if [ ! -f "./hexo_statistics_${os}_${arch}.exe" ]; then
+            if [ ! -f "./${bin_prefix}_${os}_${arch}.exe" ]; then
                 continue
             fi
-            mkdir ${stat_path}
-            mv ./hexo_statistics_${os}_${arch}.exe ${stat_path}/hexo_statistics.exe
+            mkdir ${app_path}
+            mv ./${bin_prefix}_${os}_${arch}.exe ${app_path}/${bin_prefix}.exe
         else
-            if [ ! -f "./hexo_statistics_${os}_${arch}" ]; then
+            if [ ! -f "./${bin_prefix}_${os}_${arch}" ]; then
                 continue
             fi
-            mkdir ${stat_path}
-            mv ./hexo_statistics_${os}_${arch} ${stat_path}/hexo_statistics
+            mkdir ${app_path}
+            mv ./${bin_prefix}_${os}_${arch} ${app_path}/${bin_prefix}
         fi
-        cp ../LICENSE ${stat_path}
+        cp ../LICENSE ${app_path}
 
-        mkdir ${stat_path}/conf
-        cp -rf ../conf/* ${stat_path}/conf
+        mkdir ${app_path}/conf
+        cp -rf ../conf/* ${app_path}/conf
 
         # packages
         cd ./packages
         if [ "x${os}" = x"windows" ]; then
-            zip -rq ${stat_dir_name}.zip ${stat_dir_name}
+            zip -rq ${app_dir_name}.zip ${app_dir_name}
         else
-            tar -zcf ${stat_dir_name}.tar.gz ${stat_dir_name}
+            tar -zcf ${app_dir_name}.tar.gz ${app_dir_name}
         fi
         cd ..
-        rm -rf ${stat_path}
+        rm -rf ${app_path}
     done
 done
 
