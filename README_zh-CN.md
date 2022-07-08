@@ -84,37 +84,46 @@ docker run --name hexo-stat \
 
 ````javascript
 "use strict";
+(function() {
+    var serverDomain = "<you_statistics_domain>"
+    var apiPrefix="" // eg: /api
 
-// 配置你的 hexo statistics 服务域名
-var serverDomain = "https://<your_hexo_statistics_domain>"
+    function hexoGetData() {
+        $.ajax({
+            url: serverDomain+ apiPrefix +"/stat/get?u=" +encodeURIComponent(window.location.href),
+            type: "GET",
+            dataType: "json",
+            success: function (resp) {
+                hexoProcessResult(resp)
+                hexoCounter()
+            },
+        });
+    }
 
-function getData() {
-    $.ajax({
-        url: serverDomain + "/stat/get",
-        type: "GET",
-        dataType: "json",
-        success: function (resp) {
-            processResult(resp)
-        },
-    });
-}
+    function hexoCounter(){
+        var hm = document.createElement("script");
+        hm.src = serverDomain + apiPrefix +"/stat/counter?u=" + encodeURIComponent(window.location.href);
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    }
 
-function processResult(data) {
-    // set result
-    // site pv -> data.sitePv
-    // site uv -> data.siteUv
-    // page pv -> data.pagePv
+    function hexoProcessResult(data) {
+        // set result
+        // site pv -> data.sitePv
+        // site uv -> data.siteUv
+        // page pv -> data.pagePv
 
-  	// 编写 js 更新数据到你的博客界面
-    // 实例：
-    $(".statistics").append(`<span id="hexo_statistics_container_site_pv" style="display: inline;">Total PV <span id="hexo_statistics_value_site_pv">${data.sitePv}</span></span>`);
-    $(".statistics").append(`<span id="hexo_statistics_container_site_uv" style="display: inline;">Total UV <span id="hexo_statistics_value_site_uv">${data.siteUv}</span></span>`);
-    $("div .mt-1").append(
-        `<span id="hexo_statistics_container_page_pv" style="display: inline;"><i class="iconfont icon-eye" aria-hidden="true"></i><span id="hexo_statistics_value_page_pv">PagePv: ${data.pagePv+1}</span></span>`
-    );
-}
+        // example:
+        $(".statistics").append(`<span id="hexo_statistics_container_site_pv" style="display: inline;">总访问量 <span id="hexo_statistics_value_site_pv">${data.sitePv}</span> 次</span>`);
+        $(".statistics").append(`<span id="hexo_statistics_container_site_uv" style="display: inline;">总访客数 <span id="hexo_statistics_value_site_uv">${data.siteUv}</span> 人</span>`);
+        $("div .mt-1").append(
+            `<span id="hexo_statistics_container_page_pv" style="display: inline;"><i class="iconfont icon-eye" aria-hidden="true"></i> <span id="hexo_statistics_value_page_pv">${data.pagePv+1}</span> 次</span>`
+        );
+    }
 
-getData();
+
+    hexoGetData();
+})();
 
 ````
 
@@ -124,9 +133,6 @@ getData();
 
 ````javascript
 hexo.extend.injector.register('body_end', '<script src="/js/hexo-stat.js"></script>', 'default');
-
-// 配置你的 hexo statistics 服务域名
-hexo.extend.injector.register('body_end', '<script src="https://<hexo_statistics_domain>/stat/counter"></script>', 'default');
 ````
 
 ## TODO
